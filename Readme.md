@@ -24,30 +24,30 @@ EXAMPLE :
      
     Start Estimation . . .
 
-    Optimizing with beta =  240 . . .
-    Optimizing with beta =  247 . . .
-    Optimizing with beta =  243 . . .
+    Optimizing with beta =  268 . . .
+    Optimizing with beta =  276 . . .
+    Optimizing with beta =  272 . . .
     Optimizing with beta =  244 . . .
 
-    == Bit-security : 129.9 with optimal parameters
-         k =  4861, h1 =  7, h2 =  9, beta =  240, mem =  80.8
-                 (For simplicity, we set k1 = k2 = k/2)
+    == Bit-security : 131.2 with optimal parameters
+        k =  4606, h1 =  7, h2 = 11, beta =  268, mem =  72.9
+                (For simplicity, we set k1 = k2 = k/2)
 
     == Details
-             rop:  2^129.9
-               m:   2^12.8
-             red:  2^102.3
-         delta_0: 1.005603
-            beta:      240
-          repeat:  170.419
-               d:   2^12.8
-               c:   23.025
-            post:  2^97
-        prob_inv:   2^27.6
+             rop:  2^131.2
+               m:   2^12.9
+             red:  2^110.5
+         delta_0: 1.005218
+            beta:      268
+          repeat: 1.031899
+               d:   2^12.9
+               c:   23.890
+            post:  2^108.6
+        prob_inv:   2^20.3
                k:   2^12.2
               h1:        7
-              h2:       9
-             mem:   2^80.8
+              h2:       11
+             mem:   2^72.9
              
 ## Attack Implementation
 
