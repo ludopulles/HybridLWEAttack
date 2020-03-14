@@ -1,7 +1,7 @@
 from estimator import *
 import pprint
 
-def hyb_estimate(f, n, alpha, q, bound, secret_distribution=True, **kwds):
+def hyb_estimate(f, n, alpha, q, bound, mem_bound = 2**80, secret_distribution=True, **kwds):
     '''
     * Input 'bound' means,
     the lattice reduction will finds short vectors of (log) size < 'log(q) - bound'.
@@ -47,7 +47,7 @@ def hyb_estimate(f, n, alpha, q, bound, secret_distribution=True, **kwds):
 
         k1 = k / 2
         k2 = k - k1             # Divide the matrix equally.      
-        mem_bound = 2 ** 80     # Bound the memory capacity for MITM by 2**80.
+        mem_bound = mem_bound   # Bound the memory capacity for MITM (default: 2**80)
         h1 = 5
 
         while h1 < k1: 
@@ -189,7 +189,7 @@ def dual_scale_hyb(n, alpha, q, bound, k1, k2, h1, h2, secret_distribution,
 
     return best
 
-def MITM_estimator(n, alpha, q, h = 64, start_bound = 10, Max_bound = 13, step_size = 1, reduction_cost_model = reduction_default_cost):
+def MITM_estimator(n, alpha, q, h = 64, start_bound = 10, Max_bound = 13, step_size = 1,  mem_bound = 2**80, reduction_cost_model = reduction_default_cost):
     bound = float(start_bound)
     mitm_hyb = partial(hyb_estimate, dual_scale_hyb)
     best = None
@@ -205,7 +205,7 @@ def MITM_estimator(n, alpha, q, h = 64, start_bound = 10, Max_bound = 13, step_s
 
     while Level <= 2:
 
-        res = mitm_hyb(n, alpha, q, bound, secret_distribution=((-1, 1), h), reduction_cost_model=reduction_cost_model)
+        res = mitm_hyb(n, alpha, q, bound, mem_bound = mem_bound, secret_distribution=((-1, 1), h), reduction_cost_model=reduction_cost_model)
         
         print "Optimizing with beta = %4d . . ." % res["beta"]
 
