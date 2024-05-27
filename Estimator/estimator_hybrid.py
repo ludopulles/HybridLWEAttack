@@ -88,7 +88,7 @@ def hyb_estimate(f, n, alpha, q, bound, mem_bound = 2**80, secret_distribution=T
                 if int(cost_query) > int(cost_lat):
                     best_h1 = current
                     best_h1["rop"] = oo
-                    #print 'mem = %5.1f, cost_tableConstruct = %5.1f, cost_query = %5.1f, cost_lat = %5.1f' % (log(mem,2), log(cost_tableConstruct,2),log(cost_query,2), log(cost_lat,2))
+                    #print('mem = %5.1f, cost_tableConstruct = %5.1f, cost_query = %5.1f, cost_lat = %5.1f' % (log(mem,2), log(cost_tableConstruct,2),log(cost_query,2), log(cost_lat,2)))
                     break
                 
                 if best_h1 is None or current["rop"] < best_h1["rop"]:
@@ -105,7 +105,7 @@ def hyb_estimate(f, n, alpha, q, bound, mem_bound = 2**80, secret_distribution=T
             if cost_mem + best_k["repeat"] * binomial(k1, h1 + 1) * (b-a) ** h1 > mem_bound:                
                 break
 
-            #print 'k = %4d, rop = %5.1f, h1 = %4d, h2 = %4d' % (best_h1["k"], log(best_h1["rop"], 2), best_h1["h1"], best_h1["h2"])
+            #print('k = %4d, rop = %5.1f, h1 = %4d, h2 = %4d' % (best_h1["k"], log(best_h1["rop"], 2), best_h1["h1"], best_h1["h2"]))
             h1 += 1
                                 
         if best is None or best_k["rop"] < best["rop"]:
@@ -194,20 +194,20 @@ def MITM_estimator(n, alpha, q, h = 64, start_bound = 10, Max_bound = 13, step_s
     mitm_hyb = partial(hyb_estimate, dual_scale_hyb)
     best = None
     bound_best = bound
-    print 'Chosen Parameters : '
-    print '     n = %5d, log(q) = %5.1f, stddev = %5.2f, HW(s) = %4d' % (n, log(q,2), RR(stddevf(alpha * q)), h)
-    print
+    print('Chosen Parameters : ')
+    print('     n = %5d, log(q) = %5.1f, stddev = %5.2f, HW(s) = %4d' % (n, log(q,2), RR(stddevf(alpha * q)), h))
+    print()
     Level = 0
     step = float(step_size)
 
-    print 'Start Estimation . . .'
-    print 
+    print('Start Estimation . . .')
+    print()
 
     while Level <= 2:
 
         res = mitm_hyb(n, alpha, q, bound, mem_bound = mem_bound, secret_distribution=((-1, 1), h), reduction_cost_model=reduction_cost_model)
         
-        print "Optimizing with beta = %4d . . ." % res["beta"]
+        print("Optimizing with beta = %4d . . ." % res["beta"])
 
         if best is None or res["rop"] < best["rop"]:            
             best = res
@@ -222,10 +222,10 @@ def MITM_estimator(n, alpha, q, h = 64, start_bound = 10, Max_bound = 13, step_s
             Level += 1
             if Level <=2:
                 bound -= step
-    print
-    print '== Bit-security : %5.1f with optimal parameters' % log(best["rop"], 2)
-    print '     k = %5d, h1 = %2d, h2 = %2d, beta = %4d, mem = %5.1f' % (best["k"], best["h1"], best["h2"], best["beta"], log(best["mem"],2))
-    print '             (For simplicity, we set k1 = k2 = k/2)'
-    print
-    print "== Details"
+    print()
+    print('== Bit-security : %5.1f with optimal parameters' % log(best["rop"], 2))
+    print('     k = %5d, h1 = %2d, h2 = %2d, beta = %4d, mem = %5.1f' % (best["k"], best["h1"], best["h2"], best["beta"], log(best["mem"],2)))
+    print('             (For simplicity, we set k1 = k2 = k/2)')
+    print()
+    print("== Details")
     pprint.pprint(best)
