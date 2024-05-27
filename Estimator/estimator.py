@@ -254,7 +254,7 @@ class Param:
             if prec is None or prec < 128:
                 prec = 128
         RR = RealField(prec)
-        n, alpha, q =  ZZ(n), RR(alpha), ZZ(q),
+        n, alpha, q = ZZ(n), RR(alpha), ZZ(q)
 
         if m is not oo:
             m = ZZ(m)
@@ -395,7 +395,8 @@ class Cost:
                         else:
                             s.append(u"%s: %8.3f" % (kk, v))
             else:
-                t = u"%s"%(u"≈" if unicode else "") + u"%s2^%.1f" % ("-" if v < 0 else "", log(abs(v), 2).n())
+                lg_v = RR(log(abs(v), 2))
+                t = u"%s"%(u"≈" if unicode else "") + u"%s2^%.1f" % ("-" if v < 0 else "", lg_v)
                 if compact:
                     s.append(u"%s: %s" % (kk, t))
                 else:
@@ -1009,12 +1010,12 @@ def rinse_and_repeat(f, n, alpha, q, success_probability=0.99, m=oo,
     """
     n, alpha, q, success_probability = Param.preprocess(n, alpha, q, success_probability)
     RR = parent(alpha)
-
     best = None
-    step_size = 32
+    step_size = 32.0
     i = floor(-log(success_probability, 2))
+    best_i = None
     has_solution = False
-    while True:
+    while step_size >= 0.5:
         prob = RR(min(2**-i, success_probability))
         try:
             current = f(n, alpha, q, success_probability=prob, m=m, *args, **kwds)
@@ -1034,6 +1035,7 @@ def rinse_and_repeat(f, n, alpha, q, success_probability=0.99, m=oo,
         if best is None:
             if current[key] is not PlusInfinity():
                 best = current
+                best_i = i
             i += step_size
 
             if i > 8192:  # somewhat arbitrary constant
@@ -1043,18 +1045,14 @@ def rinse_and_repeat(f, n, alpha, q, success_probability=0.99, m=oo,
 
         if key not in best or current[key] < best[key]:
             best = current
+            best_i = i
             i += step_size
         else:
-            # we go back
-            i = -log(best["epsilon"], 2) - step_size
-            i += step_size/2
-            if i <= 0:
-                i = step_size/2
-            # and half the step size
+            # we go back and half the step size
             step_size = step_size/2
-
-        if step_size == 0:
-            break
+            i = best_i - step_size
+            if i <= 0:
+                i = step_size
 
     if not has_solution:
         raise RuntimeError("No solution found for chosen parameters.")
@@ -1440,6 +1438,7 @@ class BKZ:
     enum =   CheNgu12
 
 
+@cached_function
 def delta_0f(beta):
     """
     Compute root-Hermite factor `δ_0` from block size `β`.
@@ -1448,6 +1447,7 @@ def delta_0f(beta):
     return BKZ._delta_0f(beta)
 
 
+@cached_function
 def betaf(delta):
     """
     Compute block size `β` from root-Hermite factor `δ_0`.
