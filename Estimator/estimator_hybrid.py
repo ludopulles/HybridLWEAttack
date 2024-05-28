@@ -172,43 +172,46 @@ def dual_scale_hyb(n, alpha, q, bound, k, h1, h2, HW,
     return ret
 
 
-def MITM_estimator(n, alpha, q, h=64, start_bound=10, Max_bound=13,
-                   step_size=1, mem_bound=2**80,
+def MITM_estimator(n, alpha, q, h=64, start_bound=10, max_bound=13,
+                   step_size=1, mem_bound=2**80, verbose=True,
                    reduction_cost_model=reduction_default_cost):
     bound = float(start_bound)
     mitm_hyb = partial(hyb_estimate, dual_scale_hyb)
     best = None
-    print('Chosen Parameters : ')
-    print('     n = %5d, log(q) = %5.1f, stddev = %5.2f, HW(s) = %4d' % (n, log(q, 2), RR(stddevf(alpha * q)), h))
-    print()
-    Level = 0
+    level = 0
     step = float(step_size)
 
-    print('Start Estimation . . .')
-    print()
+    if verbose:
+        print('Chosen Parameters : ')
+        print('     n = %5d, log(q) = %5.1f, stddev = %5.2f, HW(s) = %4d' % (n, log(q, 2), RR(stddevf(alpha * q)), h))
+        print()
+        print('Start Estimation . . .')
+        print()
 
-    while Level <= 2:
-
+    while level <= 2:
         res = mitm_hyb(n, alpha, q, bound, mem_bound=mem_bound, HW=h, reduction_cost_model=reduction_cost_model)
 
-        print("Optimizing with beta = %4d . . ." % res["beta"])
+        if verbose:
+            print("Optimizing with beta = %4d . . ." % res["beta"])
 
         if best is None or res["rop"] < best["rop"]:
             best = res
-            while bound + step > Max_bound and Level <= 2:
+            while bound + step > max_bound and level <= 2:
                 step = float(step/2)
-                Level += 1
+                level += 1
             bound += step
-
         else:
             step = float(step/2)
-            Level += 1
-            if Level <= 2:
+            level += 1
+            if level <= 2:
                 bound -= step
-    print()
-    print('== Bit-security : %5.1f with optimal parameters' % log(best["rop"], 2))
-    print('     k = %5d, h1 = %2d, h2 = %2d, beta = %4d, mem = %5.1f' % (best["k"], best["h1"], best["h2"], best["beta"], log(best["mem"], 2)))
-    print('             (For simplicity, we set k1 = k2 = k/2)')
-    print()
-    print("== Details")
-    pprint.pprint(best)
+
+    if verbose:
+        print()
+        print('== Bit-security : %5.1f with optimal parameters' % log(best["rop"], 2))
+        print('     k = %5d, h1 = %2d, h2 = %2d, beta = %4d, mem = %5.1f' % (best["k"], best["h1"], best["h2"], best["beta"], log(best["mem"], 2)))
+        print('             (For simplicity, we set k1 = k2 = k/2)')
+        print()
+        print("== Details")
+        pprint.pprint(best)
+    return best
