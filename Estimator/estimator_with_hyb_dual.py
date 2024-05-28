@@ -146,7 +146,7 @@ def binary_search(f, start, stop, param, predicate=lambda x, best: x<=best, *arg
                 b = floor((start+b)/2)
         else:
             best = D[b]
-            logging.getLogger("binsearch").debug(u"%4d, %s"%(b, best))
+            logging.getLogger("binsearch").debug("%4d, %s"%(b, best))
             if b-1 not in D:
                 kwds[param] = b-1
                 D[b-1] = f(*arg, **kwds)
@@ -244,7 +244,7 @@ class Param:
         if q < 1:
             raise ValueError("LWE modulus must be greater than 0.")
         if m is not None and m < 1:
-            raise InsufficientSamplesError(u"m=%d < 1"%m)
+            raise InsufficientSamplesError("m=%d < 1"%m)
 
         if prec is None:
             try:
@@ -360,17 +360,17 @@ class Cost:
             sage: print(s)
             bar: 2, delta_0: 5
 
-            sage: s = Cost([(u"delta_0", 5), ("bar",2)])
+            sage: s = Cost([("delta_0", 5), ("bar",2)])
             sage: print(s)
             delta_0: 5, bar: 2
 
         """
         if unicode:
-            unicode_replacements = {"delta_0": u"δ_0", "beta": u"β", "epsilon": u"ε"}
+            unicode_replacements = {"delta_0": "δ_0", "beta": "β", "epsilon": "ε"}
         else:
             unicode_replacements = {}
 
-        format_strings = {u"beta": u"%s: %4d", u"d": u"%s: %4d",
+        format_strings = {"beta": "%s: %4d", "d": "%s: %4d",
                           "b": "%s: %3d", "t1": "%s: %3d", "t2": "%s: %3d",
                           "l": "%s: %3d", "ncod": "%s: %3d", "ntop": "%s: %3d", "ntest": "%s: %3d"}
 
@@ -380,40 +380,40 @@ class Cost:
             v = d[k]
             kk = unicode_replacements.get(k, k)
             if keyword_width:
-                fmt = u"%%%ds" % keyword_width
+                fmt = "%%%ds" % keyword_width
                 kk = fmt % kk
             if not newline and k in format_strings:
                 s.append(format_strings[k]%(kk, v))
             elif ZZ(1)/round_bound < v < round_bound or v == 0 or ZZ(-1)/round_bound > v > -round_bound:
                 try:
                     if compact:
-                        s.append(u"%s: %d" % (kk, ZZ(v)))
+                        s.append("%s: %d" % (kk, ZZ(v)))
                     else:
-                        s.append(u"%s: %8d" % (kk, ZZ(v)))
+                        s.append("%s: %8d" % (kk, ZZ(v)))
                 except TypeError:
                     if v < 2.0 and v >= 0.0:
                         if compact:
-                            s.append(u"%s: %.6f" % (kk, v))
+                            s.append("%s: %.6f" % (kk, v))
                         else:
-                            s.append(u"%s: %8.6f" % (kk, v))
+                            s.append("%s: %8.6f" % (kk, v))
                     else:
                         if compact:
-                            s.append(u"%s: %.3f" % (kk, v))
+                            s.append("%s: %.3f" % (kk, v))
                         else:
-                            s.append(u"%s: %8.3f" % (kk, v))
+                            s.append("%s: %8.3f" % (kk, v))
             else:
-                t = u"%s"%(u"≈" if unicode else "") + u"%s2^%.1f" % ("-" if v < 0 else "", log(abs(v), 2).n())
+                t = "%s"%("≈" if unicode else "") + "%s2^%.1f" % ("-" if v < 0 else "", log(abs(v), 2).n())
                 if compact:
-                    s.append(u"%s: %s" % (kk, t))
+                    s.append("%s: %s" % (kk, t))
                 else:
-                    s.append(u"%s: %8s" % (kk, t))
+                    s.append("%s: %8s" % (kk, t))
         if not newline:
             if compact:
-                return u", ".join(s)
+                return ", ".join(s)
             else:
-                return u",  ".join(s)
+                return ",  ".join(s)
         else:
-            return u"\n".join(s)
+            return "\n".join(s)
 
     def reorder(self, first):
         """
@@ -458,7 +458,7 @@ class Cost:
         return Cost(r)
 
     def repeat(self, times, select=None, lll=None):
-        u"""
+        """
         Return a report with all costs multiplied by `times`.
 
         :param d:      a cost estimate
@@ -502,24 +502,24 @@ class Cost:
         """
         # TODO review this list
         do_repeat = {
-            u"rop": True,
-            u"red": True,
-            u"babai": True,
-            u"babai_op": True,
-            u"epsilon": False,
+            "rop": True,
+            "red": True,
+            "babai": True,
+            "babai_op": True,
+            "epsilon": False,
 
-            u"mem": False,
-            u"delta_0": False,
-            u"beta": False,
-            u"k": False,
-            u"D_reg": False,
-            u"t": False,
-            u"m": True,
-            u"d": False,
-            u"|v|": False,
-            u"amplify": False,
-            u"repeat": False,  # we deal with it below
-            u"c": False,
+            "mem": False,
+            "delta_0": False,
+            "beta": False,
+            "k": False,
+            "D_reg": False,
+            "t": False,
+            "m": True,
+            "d": False,
+            "|v|": False,
+            "amplify": False,
+            "repeat": False,  # we deal with it below
+            "c": False,
         }
 
         if lll and self["red"] != self["rop"]:
@@ -540,8 +540,8 @@ class Cost:
                 else:
                     ret[key] = self.data[key]
             except KeyError:
-                raise NotImplementedError(u"You found a bug, this function does not know about '%s' but should."%key)
-        ret[u"repeat"] = times * ret.get("repeat", 1)
+                raise NotImplementedError("You found a bug, this function does not know about '%s' but should."%key)
+        ret["repeat"] = times * ret.get("repeat", 1)
         return Cost(ret)
 
     def __rmul__(self, times):
@@ -1000,7 +1000,7 @@ def amplify_sigma(target_advantage, sigma, q):
 
 
 def rinse_and_repeat(f, n, alpha, q, success_probability=0.99, m=oo,
-                     optimisation_target=u"red",
+                     optimisation_target="red",
                      decision=True, repeat_select=None,
                      *args, **kwds):
     """Find best trade-off between success probability and running time.
@@ -1115,7 +1115,7 @@ class BKZ:
                         t.append(t_)
                         delta_0.append(delta_0_)
                     i += threads
-                    print u"β: %2d, δ_0: %.5f, time: %5.1fs, (%2d,%2d)"%(beta, mean(delta_0), mean(t), i, threads)
+                    print "β: %2d, δ_0: %.5f, time: %5.1fs, (%2d,%2d)"%(beta, mean(delta_0), mean(t), i, threads)
                 print
         ```
 
@@ -1306,7 +1306,7 @@ class BKZ:
 
     @staticmethod
     def _BDGL16_small(beta, d, B=None):
-        u"""
+        """
          Runtime estimation given `β` and assuming sieving is used to realise the SVP oracle for small dimensions.
 
          :param beta: block size
@@ -1321,7 +1321,7 @@ class BKZ:
 
     @staticmethod
     def _BDGL16_asymptotic(beta, d, B=None):
-        u"""
+        """
          Runtime estimation given `β` and assuming sieving is used to realise the SVP oracle.
 
          :param beta: block size
@@ -1337,7 +1337,7 @@ class BKZ:
 
     @staticmethod
     def BDGL16(beta, d, B=None):
-        u"""
+        """
          Runtime estimation given `β` and assuming sieving is used to realise the SVP oracle.
 
          :param beta: block size
@@ -1356,7 +1356,7 @@ class BKZ:
 
     @staticmethod
     def LaaMosPol14(beta, d, B=None):
-        u"""
+        """
          Runtime estimation for quantum sieving.
 
          :param beta: block size
@@ -1375,7 +1375,7 @@ class BKZ:
 
     @staticmethod
     def CheNgu12(beta, d, B=None):
-        u"""
+        """
          Runtime estimation given `β` and assuming [CheNgu12]_ estimates are correct.
 
          :param beta: block size
@@ -1406,7 +1406,7 @@ class BKZ:
 
     @staticmethod
     def ADPS16(beta, d, B=None, mode="classical"):
-        u"""
+        """
          Runtime estimation from [ADPS16]_.
 
          :param beta: block size
@@ -1932,7 +1932,7 @@ def _primal_usvp(block_size, n, alpha, q, scale=1, m=oo,
 def primal_usvp(n, alpha, q, secret_distribution=True,
                 m=oo, success_probability=0.99,
                 reduction_cost_model=reduction_default_cost, **kwds):
-    u"""
+    """
     Estimate cost of solving LWE using primal attack (uSVP version)
 
     :param n: LWE dimension `n > 0`
@@ -2196,7 +2196,7 @@ def _primal_decode(n, alpha, q, secret_distribution=True, m=oo, success_probabil
             current[key] = bkz[key]
         for key in enum:
             current[key] = enum[key]
-        current[u"m"]  = m_-n if SDis.is_small(secret_distribution) else m_
+        current["m"]  = m_-n if SDis.is_small(secret_distribution) else m_
         return current
 
     depth = 6
@@ -2397,9 +2397,9 @@ def _dual(n, alpha, q, secret_distribution=True, m=oo, success_probability=0.99,
         raise OutOfBoundsError("delta_0 = %f < %f" % (delta_0, delta_0f(m)))
 
     ret = lattice_reduction_cost(reduction_cost_model, delta_0, m, B=log(q, 2))
-    ret[u"m"] = m
-    ret[u"d"] = m
-    ret[u"|v|"] = RR(delta_0**m * q**(n/m))
+    ret["m"] = m
+    ret["d"] = m
+    ret["|v|"] = RR(delta_0**m * q**(n/m))
     return ret.reorder(["rop", "m"])
 
 
@@ -2508,10 +2508,10 @@ def dual_scale(n, alpha, q, secret_distribution,
             lll = None
         ret = ret.repeat(times=repeat, lll=lll)
 
-        ret[u"m"] = m
-        ret[u"repeat"] = repeat
-        ret[u"d"] = d
-        ret[u"c"] = c
+        ret["m"] = m
+        ret["repeat"] = repeat
+        ret["d"] = d
+        ret["c"] = c
 
         ret = ret.reorder(["rop", "m"])
         logging.getLogger("repeat").debug(ret)
@@ -2706,10 +2706,10 @@ def dual_scale_hyb(n, alpha, q, bound, k1, k2, h1, h2, secret_distribution,
                 lll = None
             ret = ret.repeat(times=repeat, lll=lll)
 
-            ret[u"m"] = m_
-            ret[u"repeat"] = repeat
-            ret[u"d"] = m_
-            ret[u"c"] = c
+            ret["m"] = m_
+            ret["repeat"] = repeat
+            ret["d"] = m_
+            ret["c"] = c
 
             ret = ret.reorder(["rop", "m"])
             logging.getLogger("repeat").debug(ret)
@@ -2845,7 +2845,7 @@ def _bkw_coded(n, alpha, q, secret_distribution=True, m=oo, success_probability=
         d = 3*sigma      # TODO make this dependent on success_probability
 
     # cost["d"] = d
-    # cost[u"γ"] = gamma
+    # cost["γ"] = gamma
 
     def N(i, sigma_set):
         """
@@ -2913,7 +2913,7 @@ def _bkw_coded(n, alpha, q, secret_distribution=True, m=oo, success_probability=
     # if there's no ntest then there's no `σ_{set}` and hence no ncod
     if ntest:
         sigma_set = sqrt(q**(2*(1-l/ntest))/12)
-        # cost[u"σ_set"] = RR(sigma_set)
+        # cost["σ_set"] = RR(sigma_set)
         ncod = sum([N(i, sigma_set) for i in range(1, t2+1)])
     else:
         ncod = 0
@@ -2928,7 +2928,7 @@ def _bkw_coded(n, alpha, q, secret_distribution=True, m=oo, success_probability=
     s_var = SDis.variance(secret_distribution, alpha, q)
     coding_variance = s_var * sigma_set**2 * ntot
     sigma_final = RR(sqrt(2**(t1+t2) * sigma**2 + coding_variance))
-    # cost[u"σ_final"] = RR(sigma_final)
+    # cost["σ_final"] = RR(sigma_final)
 
     M = amplify_sigma(success_probability, sigmaf(sigma_final), q)
     if M is oo:

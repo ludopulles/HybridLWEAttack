@@ -162,10 +162,10 @@ def dual_scale_hyb(n, alpha, q, bound, k, h1, h2, HW,
         lll = None
     ret = ret.repeat(times=tau, lll=lll)
 
-    ret[u"m"] = m_
-    ret[u"repeat"] = tau
-    ret[u"d"] = m_
-    ret[u"c"] = c
+    ret["m"] = m_
+    ret["repeat"] = tau
+    ret["d"] = m_
+    ret["c"] = c
 
     ret = ret.reorder(["rop", "m"])
     logging.getLogger("repeat").debug(ret)
